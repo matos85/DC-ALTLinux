@@ -1,0 +1,67 @@
+# Domain Admin Panel
+
+Веб-панель для управления `Samba AD`, пользователями, группами, `OU`, `DNS`, шарами и `ACL` через связку:
+
+- `Next.js` для UI
+- `Django + DRF` для API и RBAC
+- `Postgres` для хранения данных панели
+- `Redis + Celery` для очереди задач
+- `FastAPI` agent на сервере домена для безопасного выполнения разрешённых операций
+
+## Структура
+
+- `backend` — API, аутентификация, аудит, оркестрация задач
+- `frontend` — административный интерфейс
+- `agent` — локальный сервис с белым списком `Samba`-операций
+- `infra` — `docker-compose` для локального запуска
+
+## Быстрый старт
+
+1. Скопировать `.env.example` в `.env` и при необходимости поправить значения.
+2. В `backend` для локальной разработки можно использовать `USE_SQLITE=1`.
+3. Поднять инфраструктуру:
+
+```bash
+cd infra
+docker compose up --build
+```
+
+4. Backend будет доступен на `http://localhost:8000`, frontend на `http://localhost:3000`, agent на `http://localhost:8090`.
+
+## Backend локально
+
+```bash
+cd backend
+set USE_SQLITE=1
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+## Frontend локально
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Agent локально
+
+```bash
+cd agent
+uvicorn domain_agent.main:app --reload --port 8090
+```
+
+## Что реализовано в v1
+
+- JWT-аутентификация панели
+- роли панели `superadmin`, `domain_admin`, `helpdesk`, `auditor`
+- аудит административных операций
+- очередь задач и повторы выполнения
+- работа с пользователями, группами, `OU`, `DNS`, компьютерами, шарами и `ACL`
+- UI-страницы под основные административные сценарии
+
+## Важное ограничение
+
+Agent должен запускаться рядом с доменным сервером и иметь доступ только к заранее разрешённым командам. Не давайте web-приложению прямой `SSH/root` доступ к `DC`.

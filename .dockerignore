@@ -1,0 +1,9 @@
+.git
+**/node_modules
+**/.next
+**/__pycache__
+*.pyc
+*.pyo
+.Python
+*.md
+smoke-test-results.json
