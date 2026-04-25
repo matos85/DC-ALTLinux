@@ -28,31 +28,6 @@ docker compose up --build
 
 4. Backend будет доступен на `http://localhost:8000`, frontend на `http://localhost:3000`, agent на `http://localhost:8090`.
 
-## Backend локально
-
-```bash
-cd backend
-set USE_SQLITE=1
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-## Frontend локально
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-## Agent локально
-
-```bash
-cd agent
-uvicorn domain_agent.main:app --reload --port 8090
-```
-
 ## Что реализовано в v1
 
 - JWT-аутентификация панели
